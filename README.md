@@ -1,5 +1,13 @@
 # React-shop-cloudfront
 
+## Links to deployment
+
+Manual Deployment (s3): https://aws-rss-task-2-manual.s3.eu-central-1.amazonaws.com/index.html
+Manual Deployment (Cloufromt): https://d3ar8t5slm5my9.cloudfront.net/
+Automated Deployment: https://d7b4dfeegi4lf.cloudfront.net/
+
+---
+
 This is frontend starter project for nodejs-aws mentoring program. It uses the following technologies:
 
 - [Vite](https://vitejs.dev/) as a project bundler
@@ -16,6 +24,14 @@ This is frontend starter project for nodejs-aws mentoring program. It uses the f
 - [TypeScript](https://www.typescriptlang.org/) as a type checking tool
 
 ## Available Scripts
+
+### `deploy`
+
+Builds the project for production in `dist` folder and deploy it on AWS.
+
+### `destroy`
+
+Destroys the AWS deployment.
 
 ### `start`
 
