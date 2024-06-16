@@ -46,8 +46,25 @@ export class CdkDeploymentStack extends cdk.Stack {
           behaviors: [
             {
               isDefaultBehavior: true,
+              allowedMethods: cloudfront.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+              cachedMethods: cloudfront.CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
+              viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             },
           ],
+        },
+      ],
+      errorConfigurations: [
+        {
+          errorCode: 403,
+          responsePagePath: "/index.html",
+          responseCode: 200,
+          errorCachingMinTtl: 300,
+        },
+        {
+          errorCode: 404,
+          responsePagePath: "/index.html",
+          responseCode: 200,
+          errorCachingMinTtl: 300,
         },
       ],
     });
@@ -58,6 +75,12 @@ export class CdkDeploymentStack extends cdk.Stack {
       destinationBucket: siteBucket,
       distribution,
       distributionPaths: ["/*"],
+    });
+
+    // Output the CloudFront URL
+    new cdk.CfnOutput(this, 'CloudFrontURL', {
+      value: distribution.distributionDomainName,
+      description: 'The CloudFront distribution URL for the website',
     });
   }
 }
