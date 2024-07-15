@@ -37,54 +37,30 @@ root.render(
   </React.StrictMode>
 );
 
-const handleImport = async () => {
-  const authorization_token = localStorage.getItem('authorization_token');
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    const { response, request, message } = error;
 
-  const config = () => {
-    if (authorization_token) {
-      return {
-        headers: {
-          'Authorization': `Basic ${authorization_token}`
-        },
-        params: {
-          name: encodeURIComponent('products.csv'),
-        }
-      }
-    } else {
-      return {
-        params: {
-          name: encodeURIComponent('products.csv'),
-        }
-      }
-    }
-  }
+    if (response) {
+      const statusMessages: { [key: number]: string } = {
+        401: "401 - Unauthorized",
+        403: "403 - Access Denied error"
+      };
 
-  try {
-    const response = await axios.get('https://2jpg5wfxt7.execute-api.eu-central-1.amazonaws.com/prod/import', config());
-
-    if (response.status === 401) {
-      alert('Authorization header not provided');
-    } else if (response.status === 403) {
-      alert('Access denied');
-    } else {
-      console.log('Import successful:', response.data);
-    }
-  } catch (error: any) {
-    console.log(error);
-    if (error.response) {
-      if (error.response.status === 401) {
-        alert('Authorization header not provided (401 Unauthorized)');
-      } else if (error.response.status === 403) {
-        alert('Access denied (403 Forbidden)');
+      const alertMessage = statusMessages[response.status as number];
+      if (alertMessage) {
+        console.log(alertMessage.split(' - ')[1].toLowerCase() + " error");
+        alert(alertMessage);
       } else {
-        console.error('Error importing:', error.response.data);
+        console.log("Error", message);
       }
-    } else if (error.request) {
-      console.error('Error importing: No response received', error.request);
+    } else if (request) {
+      console.log("No response was received");
     } else {
-      console.error('Error importing:', error.message);
+      console.log("Error setting up request");
     }
-  }
-};
 
-handleImport();
+    return Promise.reject(error);
+  }
+);
